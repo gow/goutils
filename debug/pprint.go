@@ -63,16 +63,29 @@ func stringifyStruct(refVal reflect.Value, depth int, printType bool) string {
 	spaces := strings.Repeat(" ", depth*INDENT_WIDTH)
 	openBraces := ""
 	if printType {
-		openBraces = fmt.Sprintf("%s {\n", refVal.Type().String())
+		openBraces = fmt.Sprintf("%s {", refVal.Type().String())
 	} else {
-		openBraces = "{\n"
+		openBraces = "{"
 	}
 	innerContent := ""
 	for i := 0; i < refVal.NumField(); i++ {
 		f := refVal.Field(i)
-		innerContent += spaces +
-			fmt.Sprintf("%s: %s\n", refVal.Type().Field(i).Name, stringify(f, depth+1, true))
+    fieldStr := fmt.Sprintf(
+      "%s: %s",
+      refVal.Type().Field(i).Name,
+      stringify(f, depth+1, true))
+    if i < (refVal.NumField() -1) {
+      fieldStr += ", "
+    }
+    if depth < 2 {
+		  innerContent += spaces + fieldStr + "\n"
+    } else {
+      innerContent += fieldStr
+    }
 	}
-	closingBraces := fmt.Sprintln("}")
-	return openBraces + innerContent + spaces + closingBraces
+	closingBraces := "}"
+  if depth < 2 { // Indent only at the top levels.
+	  return openBraces + "\n" + innerContent + "\n" + spaces + closingBraces
+  }
+	return openBraces + innerContent + closingBraces
 }
