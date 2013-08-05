@@ -53,7 +53,8 @@ func TestPPrint(t *testing.T) {
 		//map[string]string{"foo": "bar", "qwerty": "qqq123"},
 		//[]int{3, 6, 9},
 	}
-	res := Pprint(obj)
+	res := PP(obj)
+  LogMsg(obj)
 	fmt.Println(res)
 	t.Errorf("unexpected error: %s", res)
 }
