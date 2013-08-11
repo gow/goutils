@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+type myTestInterface interface {
+	dummyFunc1()
+	dummyFunc2()
+}
+
+type myTestStruct struct {
+	dummyInt int
+}
+
+func (this myTestStruct) dummyFunc1() {
+}
+func (this myTestStruct) dummyFunc2() {
+}
+
 func TestPPrint(t *testing.T) {
 	var someBool bool = true
 	var dummyUint32 uint32 = 3232
@@ -27,8 +41,8 @@ func TestPPrint(t *testing.T) {
 		complexVal   complex128
 		arrayVal     [8]int
 		sliceVal     []dummyStruct
-		//anInterface interface{}
-		//aMap map[string]string
+		aMap         map[float64]string
+		anInterface  myTestInterface
 		//aSlice []int
 		//aBool bool
 		//anInt64 int64
@@ -50,11 +64,12 @@ func TestPPrint(t *testing.T) {
 			dummyStruct{1, 1.1},
 			dummyStruct{2, 2.2},
 		},
-		//map[string]string{"foo": "bar", "qwerty": "qqq123"},
+		map[float64]string{3.14: "bar", 2.5: "qqq123"},
+		myTestStruct{32},
 		//[]int{3, 6, 9},
 	}
 	res := PP(obj)
-  LogMsg(obj)
+	LogMsg(obj)
 	fmt.Println(res)
 	t.Errorf("unexpected error: %s", res)
 }

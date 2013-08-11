@@ -3,6 +3,7 @@ package debug
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -42,6 +43,8 @@ func stringify(refVal reflect.Value, depth int, printType bool) string {
 	case reflect.Array, reflect.Slice:
 		return stringifyList(refVal, depth)
 
+	case reflect.Map:
+		return stringifyMap(refVal, depth, printType)
 	case reflect.Struct:
 		return stringifyStruct(refVal, depth, printType)
 	case reflect.Invalid:
@@ -50,6 +53,20 @@ func stringify(refVal reflect.Value, depth int, printType bool) string {
 		return "UNKNOWN_VALUE(" + refVal.Type().String() + ")"
 	}
 	return "<nil>"
+}
+
+func stringifyMap(refVal reflect.Value, depth int, printType bool) string {
+	spaces := strings.Repeat(" ", depth*INDENT_WIDTH)
+	typeStr := refVal.Type().String()
+	itemCount := refVal.Len()
+	innerContent := ""
+	for _, key := range refVal.MapKeys() {
+		val := refVal.MapIndex(key)
+		keyStr := stringify(key, depth+1, false)
+		valStr := stringify(val, depth+1, false)
+		innerContent += spaces + keyStr + ": " + valStr + ",\n"
+	}
+	return "(" + strconv.Itoa(itemCount) + ")" + typeStr + "{\n" + innerContent + spaces + "}"
 }
 
 func stringifyPointer(refVal reflect.Value) string {
