@@ -10,6 +10,7 @@ func TestDatesFromString(t *testing.T) {
 		"2014-02-01": "2014-02-01",
 		"2014-02-31": "2014-03-03",
 		"2014-03-01": "2014-03-01",
+		"2020-03-02": "2020-03-02",
 	}
 	testInvalidDates := []string{
 		"0000-00-00",
@@ -40,6 +41,8 @@ func TestDatesFromString(t *testing.T) {
 func TestDatesFromUnixTimestamp(t *testing.T) {
 	testCases := map[int64]string{
 		1429685920: "2015-04-22", // Wed Apr 22 06:58:40 UTC 2015
+		972000000:  "2000-10-20", // Fri Oct 20 00:00:00 UTC 2000
+		2221257039: "2040-05-21", // Mon May 21 23:50:39 UTC 2040
 	}
 	for ut, dateStr := range testCases {
 		d := GetDateFromUnixTimestamp(ut)

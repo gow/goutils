@@ -1,6 +1,7 @@
 package date
 
 import (
+	"fmt"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -61,7 +62,8 @@ func GetDateFromString(dateStr string) (d Date, err error) {
 }
 
 func (d Date) String() string {
-	return d.Format(date_stamp_format)
+	yy, mm, dd := d.Date()
+	return fmt.Sprintf("%04d-%02d-%02d", yy, mm, dd)
 }
 
 func (d Date) GetBSON() (val interface{}, err error) {
@@ -97,5 +99,5 @@ func getTimeFromDateString(date string) (time.Time, error) {
 
 func GetDateFromUnixTimestamp(ts int64) Date {
 	ds := ts - (ts % 86400)
-	return Date{time.Unix(ds, 0).In(time.UTC)}
+	return Date{time.Unix(ds, 0)}
 }
