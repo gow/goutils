@@ -53,7 +53,7 @@ func DateEqual(d1 Date, d2 Date) bool {
 }
 
 func GetDateFromString(dateStr string) (d Date, err error) {
-	t, err := time.Parse(date_stamp_format, dateStr)
+	t, err := getTimeFromDateString(dateStr)
 	if err != nil {
 		return
 	}
@@ -94,10 +94,14 @@ func (d Date) AddDays(i int) Date {
 }
 
 func getTimeFromDateString(date string) (time.Time, error) {
-	return time.Parse(date_stamp_format, date)
+	t, err := time.Parse(date_stamp_format, date)
+	if err != nil {
+		return t, err
+	}
+	return t.In(time.UTC), err
 }
 
 func GetDateFromUnixTimestamp(ts int64) Date {
 	ds := ts - (ts % 86400)
-	return Date{time.Unix(ds, 0)}
+	return Date{time.Unix(ds, 0).In(time.UTC)}
 }

@@ -1,6 +1,7 @@
 package date
 
 import (
+	"reflect"
 	"testing"
 	"time"
 )
@@ -25,8 +26,8 @@ func TestDatesFromString(t *testing.T) {
 			continue
 		}
 		outputDate := d.String()
-		if op != outputDate {
-			t.Fatalf("Expected [%s]. Received[%s]", op, outputDate)
+		if !reflect.DeepEqual(op, outputDate) {
+			t.Fatalf("Expected [%#v]. Received[%#v]", op, outputDate)
 		}
 	}
 
@@ -49,6 +50,26 @@ func TestDatesFromUnixTimestamp(t *testing.T) {
 		outputDate := d.String()
 		if dateStr != outputDate {
 			t.Fatalf("Expected [%s]. Received[%s]", dateStr, outputDate)
+		}
+	}
+}
+
+func TestDatesFromDifferentFormats(t *testing.T) {
+	testCases := map[int64]string{
+		1429685920: "2015-04-22", // Wed Apr 22 06:58:40 UTC 2015
+		972000000:  "2000-10-20", // Fri Oct 20 00:00:00 UTC 2000
+		2221257039: "2040-05-21", // Mon May 21 23:50:39 UTC 2040
+	}
+	for ut, dateStr := range testCases {
+		dateFromUnix := GetDateFromUnixTimestamp(ut)
+		dateFromString, err := GetDateFromString(dateStr)
+		if err != nil {
+			t.Fatalf("Expected no error. Recieved: [%s]", err)
+			continue
+		}
+
+		if !reflect.DeepEqual(dateFromUnix, dateFromString) {
+			t.Fatalf("Expected the following dates to be deeply equal:\n[%#v]\n[%#v]", dateFromUnix, dateFromString)
 		}
 	}
 }
