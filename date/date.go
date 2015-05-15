@@ -16,6 +16,19 @@ type Date struct {
 	time.Time
 }
 
+/*
+type Dates []Date
+
+func (d Dates) Len() int {
+	return len(d)
+}
+func (d Dates) Swap(i, j int) {
+	d[i], d[j] = d[i], d[j]
+}
+func (d Dates) Equal(i, j int) bool {
+}
+*/
+
 // Cmp compares d1 and d2. It returns 0 if both dates are equal, -1 if d1>d2 and 1 if d2>d1
 func Cmp(d1 Date, d2 Date) int {
 	d1Str := d1.String()
@@ -30,26 +43,30 @@ func Cmp(d1 Date, d2 Date) int {
 }
 
 // Min returns the earlier date from the input dates
-// TODO: make it work on ...
-func Min(d1 Date, d2 Date) Date {
-	if d1.String() > d2.String() {
-		return d2
+func Min(d1 Date, dates ...Date) Date {
+	min := d1
+	for _, d := range dates {
+		if min.After(d.Time) {
+			min = d
+		}
 	}
-	return d1
+	return min
 }
 
 // Max returns the later date from the input dates.
-// TODO: make it work on ...
-func Max(d1 Date, d2 Date) Date {
-	if d1.String() > d2.String() {
-		return d1
+func Max(d1 Date, dates ...Date) Date {
+	max := d1
+	for _, d := range dates {
+		if max.Before(d.Time) {
+			max = d
+		}
 	}
-	return d2
+	return max
 }
 
 // Equal returns true if d1 & d2 represent the same date in UTC.
 func Equal(d1 Date, d2 Date) bool {
-	return d1.String() == d2.String()
+	return d1 == d2
 }
 
 func (d Date) String() string {
@@ -57,28 +74,29 @@ func (d Date) String() string {
 	return fmt.Sprintf("%04d-%02d-%02d", yy, mm, dd)
 }
 
-func (d Date) GetBSON() (val interface{}, err error) {
-	val = d.String()
-	return
+func (d Date) GetBSON() (interface{}, error) {
+	return d.String(), nil
 }
 
-func (d *Date) SetBSON(raw bson.Raw) (err error) {
+func (d *Date) SetBSON(raw bson.Raw) error {
 	var str string
-	err = raw.Unmarshal(&str)
+	err := raw.Unmarshal(&str)
 	if err != nil {
-		return
+		return err
 	}
 	t, err := getTimeFromDateString(str)
 	if err != nil {
-		return
+		return err
 	}
 	*d = Date{t}
-	return
+	return nil
 }
 
+/*
 func (d Date) T() time.Time {
 	return d.Time
 }
+*/
 
 func (d Date) AddDays(i int) Date {
 	return Date{d.AddDate(0, 0, i)}
