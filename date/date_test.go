@@ -20,7 +20,7 @@ func TestDatesFromString(t *testing.T) {
 		"2015-12-35",
 	}
 	for ip, op := range testValidDates {
-		d, err := GetDateFromString(ip)
+		d, err := NewFromString(ip)
 		if err != nil {
 			t.Fatalf("Expected no error. Recieved: [%s]", err)
 			continue
@@ -32,7 +32,7 @@ func TestDatesFromString(t *testing.T) {
 	}
 
 	for _, dateStr := range testInvalidDates {
-		_, err := GetDateFromString(dateStr)
+		_, err := NewFromString(dateStr)
 		if err == nil {
 			t.Fatalf("[%s] is not a valid date. Expected an error. Instead received nil", dateStr)
 		}
@@ -46,7 +46,7 @@ func TestDatesFromUnixTimestamp(t *testing.T) {
 		2221257039: "2040-05-21", // Mon May 21 23:50:39 UTC 2040
 	}
 	for ut, dateStr := range testCases {
-		d := GetDateFromUnixTimestamp(ut)
+		d := NewFromUnixTimestamp(ut)
 		outputDate := d.String()
 		if dateStr != outputDate {
 			t.Fatalf("Expected [%s]. Received[%s]", dateStr, outputDate)
@@ -61,8 +61,8 @@ func TestDatesFromDifferentFormats(t *testing.T) {
 		2221257039: "2040-05-21", // Mon May 21 23:50:39 UTC 2040
 	}
 	for ut, dateStr := range testCases {
-		dateFromUnix := GetDateFromUnixTimestamp(ut)
-		dateFromString, err := GetDateFromString(dateStr)
+		dateFromUnix := NewFromUnixTimestamp(ut)
+		dateFromString, err := NewFromString(dateStr)
 		if err != nil {
 			t.Fatalf("Expected no error. Recieved: [%s]", err)
 			continue
@@ -79,9 +79,9 @@ func BenchmarkUnixDate(b *testing.B) {
 
 	hrs10 := int64(3600 * 10)
 	for i := 0; i < b.N; i++ {
-		d1 := GetDateFromUnixTimestamp(ut + hrs10)
+		d1 := NewFromUnixTimestamp(ut + hrs10)
 		d1.String()
-		d2 := GetDateFromUnixTimestamp(ut - hrs10)
+		d2 := NewFromUnixTimestamp(ut - hrs10)
 		d2.String()
 	}
 }
