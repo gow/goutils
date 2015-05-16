@@ -16,18 +16,22 @@ type Date struct {
 	time.Time
 }
 
-/*
 type Dates []Date
 
+// Len reports the number of dates in the date slice
 func (d Dates) Len() int {
 	return len(d)
 }
+
+// Swap swaps the dates at i,j
 func (d Dates) Swap(i, j int) {
-	d[i], d[j] = d[i], d[j]
+	d[i], d[j] = d[j], d[i]
 }
-func (d Dates) Equal(i, j int) bool {
+
+// Less reports if date at d[i] occurs before date at d[j]
+func (d Dates) Less(i, j int) bool {
+	return d[i].Before(d[j].Time)
 }
-*/
 
 // Cmp compares d1 and d2. It returns 0 if both dates are equal, -1 if d1>d2 and 1 if d2>d1
 func Cmp(d1 Date, d2 Date) int {
@@ -69,6 +73,7 @@ func Equal(d1 Date, d2 Date) bool {
 	return d1 == d2
 }
 
+// String returns the string version of the date in "yyyy-mm-dd" format
 func (d Date) String() string {
 	yy, mm, dd := d.Date()
 	return fmt.Sprintf("%04d-%02d-%02d", yy, mm, dd)
@@ -92,12 +97,7 @@ func (d *Date) SetBSON(raw bson.Raw) error {
 	return nil
 }
 
-/*
-func (d Date) T() time.Time {
-	return d.Time
-}
-*/
-
+// AddDays returns a new date with i days added to d
 func (d Date) AddDays(i int) Date {
 	return Date{d.AddDate(0, 0, i)}
 }

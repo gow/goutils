@@ -2,6 +2,7 @@ package date
 
 import (
 	"reflect"
+	"sort"
 	"testing"
 	"time"
 )
@@ -129,6 +130,7 @@ func TestDateBSONConversions(t *testing.T) {
 	}
 }
 
+// TestDateMinMax tests the Min & Max functions
 func TestDateMinMax(t *testing.T) {
 	cases := []struct {
 		Input       []Date
@@ -173,6 +175,35 @@ func TestDateMinMax(t *testing.T) {
 		if tc.ExpectedMax != output.String() {
 			t.Fatalf("Expected [%s]. Instead received [%s]", tc.ExpectedMax, output.String())
 		}
+	}
+}
+
+// TestDatesSorting tests the sorting interface methods of Dates.
+func TestDatesSorting(t *testing.T) {
+	dates := Dates{
+		Date{time.Unix(-2927145600, 0)}, // Fri Mar 30 00:00:00 UTC 1877
+		Date{time.Unix(2927145600, 0)},  // Wed Oct  4 00:00:00 UTC 2062
+		Date{time.Unix(932774400, 0)},   // Sat Jul 24 00:00:00 UTC 1999
+		Date{time.Unix(1429685920, 0)},  // Wed Apr 22 06:58:40 UTC 2015
+		Date{time.Unix(972000000, 0)},   // Fri Oct 20 00:00:00 UTC 2000
+		Date{time.Unix(2221257039, 0)},  // Mon May 21 23:50:39 UTC 2040
+		Date{time.Unix(-2927145500, 0)}, // Fri Mar 30 00:01:40 UTC 1877
+	}
+	sort.Sort(dates)
+	if !sort.IsSorted(dates) {
+		t.Fatalf("Failed to sort the dates: %v", dates)
+	}
+}
+
+// TestDateAddition tests date arithmetic.
+func TestDateAddition(t *testing.T) {
+	dStr := NewFromUnixTimestamp(1425081600).AddDays(1).String() // "2015-02-28" + 1 day
+	if dStr != "2015-03-01" {
+		t.Fatalf("Expected [2015-03-01]. Instead received [%s]", dStr)
+	}
+	dStr = NewFromUnixTimestamp(1431763320).AddDays(100).String() // "2015-05-16" + 100 days
+	if dStr != "2015-08-24" {
+		t.Fatalf("Expected [2015-08-24]. Instead received [%s]", dStr)
 	}
 }
 
